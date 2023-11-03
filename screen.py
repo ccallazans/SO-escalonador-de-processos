@@ -43,11 +43,10 @@ def window():
     window.mainloop()
 
 def process_window(num_process):
-    root= Tk()
-    root.geometry('700x700')
+    root = Tk()
+    root.geometry('800x800')
     root.resizable(True, True)
-    # root.iconbitmap('./images/icon.ico')
-    root.configure(bg='#cf9416')
+    root.configure(bg='#bcbcbc')
 
     quantum_label = Label(root, text='Quantum', anchor='center')
     quantum_label.place(x=70, y=70)
@@ -59,110 +58,67 @@ def process_window(num_process):
     overload_input = Entry(justify='center')
     overload_input.place(x=70, y=220)
 
-    process_data = {} 
-    actual_process = 0 
-    y_position = 70 
-    x_position = 250 
-    
-    
-    label_process = Label(root, text=f'Id Processo: {actual_process}')
-    label_process.place(x=x_position, y=y_position)
+    process_data = {}  # Dictionary to store data for each process
 
-    label_t0 = Label(root, text=f'Tempo Início:')
-    label_t0.place(x=x_position, y=y_position + 25)
-    init_entry = Entry(root, text='Tempo Início:')
-    init_entry.place(x=x_position + 150, y=y_position + 25)
+    y_position = 30
+    x_position = 250
 
-    label_t_exec = Label(root, text=f'Tempo de execução:')
-    label_t_exec.place(x=x_position, y=y_position + 50)
-    exec_entry = Entry(root, text='Tempo de execução:')
-    exec_entry.place(x=x_position + 150, y=y_position + 50)
+    for actual_process in range(num_process):
+        y_position += 150  # Adjust this value as needed
 
-    label_deadline   = Label(root, text=f'Deadline:')  
-    label_deadline.place(x=x_position, y=y_position + 75)
-    dead_entry = Entry(root, text='Deadline:')
-    dead_entry.place(x=x_position + 150, y=y_position + 75)
+        label_process = Label(root, text=f'Id Processo: {actual_process}')
+        label_process.place(x=x_position, y=y_position)
 
-    label_priority = Label(root, text=f'Prioridade:')
-    label_priority.place(x=x_position, y=y_position + 100)
-    pri_entry = Entry(root, text='Prioridade:')
-    pri_entry.place(x=x_position + 150, y=y_position + 100)
+        label_t0 = Label(root, text='Tempo Início:')
+        label_t0.place(x=x_position, y=y_position + 25)
+        init_entry = Entry(root, justify='center')
+        init_entry.place(x=x_position + 150, y=y_position + 25)
 
-    def check_if_all_fields_are_occupied():
-        filled = False
-        values = [  init_entry.get(), 
-                    exec_entry.get(), 
-                    dead_entry.get(), 
-                    pri_entry.get(),  
-                    '1']
-        if "" not in values:
-            print("Filled")
-            filled = True
+        label_t_exec = Label(root, text='Tempo de execução:')
+        label_t_exec.place(x=x_position, y=y_position + 50)
+        exec_entry = Entry(root, justify='center')
+        exec_entry.place(x=x_position + 150, y=y_position + 50)
 
-        return filled
+        label_deadline = Label(root, text='Deadline:')
+        label_deadline.place(x=x_position, y=y_position + 75)
+        dead_entry = Entry(root, justify='center')
+        dead_entry.place(x=x_position + 150, y=y_position + 75)
 
-    def clean_fields():
-        init_entry.delete(0, END)
-        exec_entry.delete(0, END)
-        dead_entry.delete(0, END)
-        pri_entry.delete(0, END)
+        label_priority = Label(root, text='Prioridade:')
+        label_priority.place(x=x_position, y=y_position + 100)
+        pri_entry = Entry(root, justify='center')
+        pri_entry.place(x=x_position + 150, y=y_position + 100)
 
-    def next_process():
-        nonlocal actual_process
-        init_entry.focus()
-        if check_if_all_fields_are_occupied(): 
-            if actual_process < num_process: 
-                
-                process_data[str(actual_process)] = [init_entry.get(), 
-                                              exec_entry.get(), 
-                                              dead_entry.get(), 
-                                              pri_entry.get(),  
-                                              '1']
-                actual_process += 1 
-                if actual_process < num_process: 
-                    label_process.configure(text=f'Processo(Id): {actual_process}')
-                    clean_fields()
-        else:
-            messagebox.showinfo(message="Preencha todos os campos!")
-
-    next = Button(root,text ="Preencher Próximo", command = next_process)
-    next.place(x=x_position + 225, y=y_position + 175)
-
-    label_scheduler = Label(root, text='Escalonador de processos')
-    label_scheduler.place(x=x_position, y=y_position + 230)
+        process_data[str(actual_process)] = {
+            'init': init_entry,
+            'exec': exec_entry,
+            'deadline': dead_entry,
+            'priority': pri_entry,
+            'process_type': '1',
+        }
 
     process = StringVar()
-    process.set( "FIFO" )
+    process.set("FIFO")
     proc_menu = OptionMenu(root, process, "FIFO", "SJF", "Round Robin", "EDF")
-    proc_menu.place(x=x_position + 180, y=y_position + 230)
-
-    """label_memory = Label(root, text='Escalonador de memoria')
-    label_memory.place(x=x_position, y=y_position + 280)
-
-    memory = StringVar()
-    memory.set( "FIFO" )
-    mem_menu = OptionMenu(root, memory, "FIFO", "MRU")
-    mem_menu.place(x=x_position + 180, y=y_position + 280)"""
+    proc_menu.place(x=x_position + 50, y=y_position + 250)
 
     def transfer_data():
-        if len(process_data) == num_process-1 and check_if_all_fields_are_occupied():
-            nonlocal actual_process
-            process_data[str(actual_process)] = [init_entry.get(), 
-                                              exec_entry.get(), 
-                                              dead_entry.get(), 
-                                              pri_entry.get(),  
-                                              '1']
-            actual_process += 1
-        elif len(process_data) != num_process: 
-            messagebox.showinfo(message="Ainda faltam processos a serem cadastrados")
-            return
-    
-        process_algorithm = process.get()
+        for process_id, data in process_data.items():
+            print(f"Process ID: {process_id}")
+            print(f"Tempo Início: {data['init'].get()}")
+            print(f"Tempo de execução: {data['exec'].get()}")
+            print(f"Deadline: {data['deadline'].get()}")
+            print(f"Prioridade: {data['priority'].get()}")
+            print(f"Process Type: {data['process_type']}")
+            print()
+            
         root.destroy()
-        sheduler_window(num_process, quantum, overload, process_data, process_algorithm)
+        sheduler_window(num_process, int(quantum_input.get()), int(overload_input.get()), process_data, process.get())
 
-    proceed = Button(root,text ="Simular", command = transfer_data)
-    proceed.place(x=x_position + 100, y=y_position + 330)
+    proceed = Button(root, text="Simular", command=transfer_data)
+    proceed.place(x=x_position + 130, y=y_position + 250)
+
+    root.mainloop()
 
 def sheduler_window(num_process, quantum, overload, process_data,process_algorithm):
     y_position = 40
