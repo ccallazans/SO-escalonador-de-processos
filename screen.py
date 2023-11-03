@@ -12,9 +12,9 @@ import os
 def window():
     window = Tk()
     window.title('Escalonador: Processos e Memória')
-    window.geometry("400x400")
-    window.resizable(False, False)
-    window.configure(bg='#cf9416')
+    window.geometry("700x700")
+    window.resizable(True, True)
+    window.configure(bg='#bcbcbc')
     current_working_directory = os.getcwd()
     # window.iconbitmap(current_working_directory + '/images/icon.ico')
 
@@ -30,40 +30,39 @@ def window():
     process_input = Entry(justify='center')
     process_input.place(x=200, y=120)
 
-    quantum_label = Label(window, text='Quantum', anchor='center')
-    quantum_label.place(x=70, y=150)
-    quantum_input = Entry(justify='center')
-    quantum_input.place(x=200, y=150)
-
-    overload_label = Label(window, text='Sobrecarga', anchor='center')
-    overload_label.place(x=70, y=180)
-    overload_input = Entry(justify='center')
-    overload_input.place(x=200, y=180)
-
     def next_window():
         num_process = int(process_input.get())
-        quantum = int(quantum_input.get())
-        overload = int(overload_input.get())
         window.destroy()
-        process_window(num_process,quantum,overload)
+        process_window(num_process)
 
     conffirm_button = Button(window,
                   text ="Confirmar",
                   command = next_window)
     conffirm_button.place(x=260, y=260)
+
     window.mainloop()
 
-def process_window(num_process,quantum,overload):
+def process_window(num_process):
     root= Tk()
-    root.geometry('600x600')
-    root.resizable(False, False)
+    root.geometry('700x700')
+    root.resizable(True, True)
     # root.iconbitmap('./images/icon.ico')
     root.configure(bg='#cf9416')
+
+    quantum_label = Label(root, text='Quantum', anchor='center')
+    quantum_label.place(x=70, y=70)
+    quantum_input = Entry(justify='center')
+    quantum_input.place(x=70, y=120)
+
+    overload_label = Label(root, text='Sobrecarga', anchor='center')
+    overload_label.place(x=70, y=180)
+    overload_input = Entry(justify='center')
+    overload_input.place(x=70, y=220)
 
     process_data = {} 
     actual_process = 0 
     y_position = 70 
-    x_position = 120 
+    x_position = 250 
     
     
     label_process = Label(root, text=f'Id Processo: {actual_process}')
@@ -174,7 +173,7 @@ def sheduler_window(num_process, quantum, overload, process_data,process_algorit
     screen_height = process_window.winfo_screenheight()
     process_window.title('Escalonador de Processos')
     process_window.geometry(f"{screen_width}x{screen_height}")
-    process_window.configure(bg='#cf9416')
+    process_window.configure(bg='#bcbcbc')
     # process_window.iconbitmap('./images/icon.ico')
     process_window.focus()
 
