@@ -58,11 +58,12 @@ def process_window(num_process):
     overload_input = Entry(justify='center')
     overload_input.place(x=70, y=220)
 
-    process_data = {}  # Dictionary to store data for each process
+    process_data = []  # Dictionary to store data for each process
 
     y_position = 30
     x_position = 250
 
+    procs = []
     for actual_process in range(num_process):
         y_position += 150  # Adjust this value as needed
 
@@ -89,38 +90,45 @@ def process_window(num_process):
         pri_entry = Entry(root, justify='center')
         pri_entry.place(x=x_position + 150, y=y_position + 100)
 
-        process_data[str(actual_process)] = {
-            'init': init_entry,
-            'exec': exec_entry,
-            'deadline': dead_entry,
-            'priority': pri_entry,
-            'process_type': '1',
-        }
+        procs.append({"init":init_entry, "exec":exec_entry,"dead":dead_entry,"pri":pri_entry})
+
+    def save_data():
+        for p in procs:
+
+            data = [
+                p["init"].get(),
+                p["exec"].get(),
+                p["dead"].get(),
+                p["pri"].get(),
+                '1'
+            ]
+            print(data)
+            process_data.append(data)
+
+    save_button = Button(root, text="Salvar Dados", command=save_data)
+    save_button.place(x=x_position + 130, y=y_position + 150)
 
     process = StringVar()
     process.set("FIFO")
     proc_menu = OptionMenu(root, process, "FIFO", "SJF", "Round Robin", "EDF")
     proc_menu.place(x=x_position + 50, y=y_position + 250)
 
-    def transfer_data():
-        for process_id, data in process_data.items():
-            print(f"Process ID: {process_id}")
-            print(f"Tempo Início: {data['init'].get()}")
-            print(f"Tempo de execução: {data['exec'].get()}")
-            print(f"Deadline: {data['deadline'].get()}")
-            print(f"Prioridade: {data['priority'].get()}")
-            print(f"Process Type: {data['process_type']}")
-            print()
-            
+
+
+    def transfer_data():            
+        quantum = int(quantum_input.get())
+        overload = int(overload_input.get())
         root.destroy()
-        sheduler_window(num_process, int(quantum_input.get()), int(overload_input.get()), process_data, process.get())
+        sheduler_window(num_process, quantum, overload, process_data, process.get())
 
     proceed = Button(root, text="Simular", command=transfer_data)
     proceed.place(x=x_position + 130, y=y_position + 250)
 
     root.mainloop()
 
+
 def sheduler_window(num_process, quantum, overload, process_data,process_algorithm):
+    print(num_process)
     y_position = 40
     x_position = 200
 
@@ -236,8 +244,8 @@ def sheduler_window(num_process, quantum, overload, process_data,process_algorit
     voltar.place(x=x_position, y=progress_y - 55)
 
 
-
-    ProcessArray = [Process.process(process_data[str(i)][0],process_data[str(i)][1],process_data[str(i)][2],process_data[str(i)][3],process_data[str(i)][4],i) for i in range(num_process)]
+    ProcessArray = [
+        Process.process(process_data[i][0],process_data[i][1],process_data[i][2],process_data[i][3],process_data[i][4],i) for i in range(num_process)]
 
     process_interface_package = [process_window, info_table, progress_table, step, stop, proceed, var , turn_around_label]
 
