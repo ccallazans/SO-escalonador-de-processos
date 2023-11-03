@@ -16,7 +16,6 @@ def window():
     window.resizable(True, True)
     window.configure(bg='#bcbcbc')
     current_working_directory = os.getcwd()
-    # window.iconbitmap(current_working_directory + '/images/icon.ico')
 
     def chamarMemoria():
         window.destroy()
@@ -42,6 +41,10 @@ def window():
 
     window.mainloop()
 
+prev_proccess_data = []
+prev_quantum = []
+prev_overload = []
+
 def process_window(num_process):
     root = Tk()
     root.geometry('800x800')
@@ -53,12 +56,18 @@ def process_window(num_process):
     quantum_input = Entry(justify='center')
     quantum_input.place(x=70, y=120)
 
+    if len(prev_quantum) > 0:
+        quantum_input.insert(0, prev_quantum[0])
+
     overload_label = Label(root, text='Sobrecarga', anchor='center')
     overload_label.place(x=70, y=180)
     overload_input = Entry(justify='center')
     overload_input.place(x=70, y=220)
 
-    process_data = []  # Dictionary to store data for each process
+    if len(prev_overload) > 0:
+        overload_input.insert(0, prev_overload[0])
+
+    process_data = []
 
     y_position = 30
     x_position = 250
@@ -90,9 +99,17 @@ def process_window(num_process):
         pri_entry = Entry(root, justify='center')
         pri_entry.place(x=x_position + 150, y=y_position + 100)
 
+        if len(prev_proccess_data) > 0:
+            init_entry.insert(0, prev_proccess_data[actual_process][0])
+            exec_entry.insert(0, prev_proccess_data[actual_process][1])
+            dead_entry.insert(0, prev_proccess_data[actual_process][2])
+            pri_entry.insert(0, prev_proccess_data[actual_process][3])
+
         procs.append({"init":init_entry, "exec":exec_entry,"dead":dead_entry,"pri":pri_entry})
 
     def save_data():
+        prev_proccess_data.clear()
+        process_data.clear()
         for p in procs:
 
             data = [
@@ -102,22 +119,26 @@ def process_window(num_process):
                 p["pri"].get(),
                 '1'
             ]
-            print(data)
+            prev_proccess_data.append(data)
             process_data.append(data)
-
-    save_button = Button(root, text="Salvar Dados", command=save_data)
-    save_button.place(x=x_position + 130, y=y_position + 150)
 
     process = StringVar()
     process.set("FIFO")
     proc_menu = OptionMenu(root, process, "FIFO", "SJF", "Round Robin", "EDF")
     proc_menu.place(x=x_position + 50, y=y_position + 250)
 
+    def transfer_data():    
+        save_data()
 
-
-    def transfer_data():            
         quantum = int(quantum_input.get())
         overload = int(overload_input.get())
+
+        prev_quantum.clear()
+        prev_overload.clear()
+
+        prev_quantum.append(quantum)
+        prev_overload.append(overload)
+
         root.destroy()
         sheduler_window(num_process, quantum, overload, process_data, process.get())
 
@@ -132,14 +153,13 @@ def sheduler_window(num_process, quantum, overload, process_data,process_algorit
     y_position = 40
     x_position = 200
 
-    process_window = Tk()
-    screen_width = process_window.winfo_screenwidth()
-    screen_height = process_window.winfo_screenheight()
-    process_window.title('Escalonador de Processos')
-    process_window.geometry(f"{screen_width}x{screen_height}")
-    process_window.configure(bg='#bcbcbc')
-    # process_window.iconbitmap('./images/icon.ico')
-    process_window.focus()
+    process_win = Tk()
+    screen_width = process_win.winfo_screenwidth()
+    screen_height = process_win.winfo_screenheight()
+    process_win.title('Escalonador de Processos')
+    process_win.geometry(f"{screen_width}x{screen_height}")
+    process_win.configure(bg='#bcbcbc')
+    process_win.focus()
 
     box_width = 2
     info_n_rows = num_process 
@@ -153,7 +173,7 @@ def sheduler_window(num_process, quantum, overload, process_data,process_algorit
 
     for i in range(progress_n_rows):
         for j in range(progress_n_columns):
-            progress_table.loc[i,j] = Entry(process_window, width=1, fg='black',
+            progress_table.loc[i,j] = Entry(process_win, width=1, fg='black',
                         font=('Arial',16,'bold'))
             if j == 0:
                 progress_table.loc[i,j].grid(row=i, column=j, padx=(x_position,0))
@@ -165,47 +185,47 @@ def sheduler_window(num_process, quantum, overload, process_data,process_algorit
 
     y = progress_y + 5
     for k in range(num_process): 
-        lb = Label(process_window, text=str(k), font=("Arial", 8))
+        lb = Label(process_win, text=str(k), font=("Arial", 8))
         lb.place(x=x_position-30, y=y)
         y = y + 28
         lb.configure(bg='#cf9416')
 
 
-    guide_exec = Entry(process_window, width=box_width, fg='black',
+    guide_exec = Entry(process_win, width=box_width, fg='black',
                         font=('Arial',8))
     guide_exec.grid(row=0, column=0, padx=(x_position-100))
     guide_exec.configure(bg='Green')
-    guide_exec_lb = Label(process_window, text='Executando', font=("Arial", 8))
+    guide_exec_lb = Label(process_win, text='Executando', font=("Arial", 8))
     guide_exec_lb.place(x=x_position-80, y=95)
     guide_exec_lb.configure(bg='#cf9416')
     
-    guide_exec = Entry(process_window, width=box_width, fg='black',
+    guide_exec = Entry(process_win, width=box_width, fg='black',
                         font=('Arial',8))
     guide_exec.grid(row=0, column=0, padx=(x_position-100), pady=(30,0))
     guide_exec.configure(bg='Gray')
-    guide_exec_lb = Label(process_window, text='Espera', font=("Arial", 8))
+    guide_exec_lb = Label(process_win, text='Espera', font=("Arial", 8))
     guide_exec_lb.place(x=x_position-80, y=113)
     guide_exec_lb.configure(bg='#cf9416')
     
-    guide_exec = Entry(process_window, width=box_width, fg='black',
+    guide_exec = Entry(process_win, width=box_width, fg='black',
                         font=('Arial',8))
     guide_exec.grid(row=0, column=0, padx=(x_position-100), pady=(60,0))
     guide_exec.configure(bg='Red')
-    guide_exec_lb = Label(process_window, text='Overload', font=("Arial", 8))
+    guide_exec_lb = Label(process_win, text='Overload', font=("Arial", 8))
     guide_exec_lb.place(x=x_position-80, y=129)
     guide_exec_lb.configure(bg='#cf9416')
     
-    guide_exec = Entry(process_window, width=box_width, fg='black',
+    guide_exec = Entry(process_win, width=box_width, fg='black',
                         font=('Arial',8))
     guide_exec.grid(row=0, column=0, padx=(x_position-100), pady=(90,0))
     guide_exec.configure(bg='Blue')
-    guide_exec_lb = Label(process_window, text='Estouro', font=("Arial", 8))
+    guide_exec_lb = Label(process_win, text='Estouro', font=("Arial", 8))
     guide_exec_lb.place(x=x_position-80, y=143)
     guide_exec_lb.configure(bg='#cf9416')
 
     x = x_position
     for k in range(progress_n_columns+1): 
-        lb = Label(process_window, text=str(k), font=("Arial", 8))
+        lb = Label(process_win, text=str(k), font=("Arial", 8))
         lb.place(x=x, y=progress_y - 22)
         if k < 10:
             x += 15
@@ -224,30 +244,31 @@ def sheduler_window(num_process, quantum, overload, process_data,process_algorit
         return   
     
     def call_open2():
-        process_window.destroy()
-        window()
+        process_win.destroy()
+        process_window(num_process)
 
-    step = Button(process_window,text =" passo-a-passo ", command = Step)
+    step = Button(process_win,text =" passo-a-passo ", command = Step)
     step.place(x=x_position, y=progress_y - 90)
 
-    stop = Button(process_window,text =" pause ", command = Step)
+    stop = Button(process_win,text =" pause ", command = Step)
     stop.place(x=x_position + 120, y=progress_y - 90)
 
-    proceed = Button(process_window,text =" total ", command = Auto)
+    proceed = Button(process_win,text =" total ", command = Auto)
     proceed.place(x=x_position + 190, y=progress_y - 90)
 
-    turn_around_label = Label(process_window, text='', font=("Arial", 13))
+    turn_around_label = Label(process_win, text='', font=("Arial", 13))
     turn_around_label.place(x=x_position + 290, y=progress_y - 90)
     turn_around_label.configure(bg='#cf9416')
 
-    voltar = Button(process_window,text =" voltar ", command = call_open2)
+    voltar = Button(process_win,text =" voltar ", command = call_open2)
     voltar.place(x=x_position, y=progress_y - 55)
 
-
+    print(num_process)
+    print(process_data)
     ProcessArray = [
         Process.process(process_data[i][0],process_data[i][1],process_data[i][2],process_data[i][3],process_data[i][4],i) for i in range(num_process)]
 
-    process_interface_package = [process_window, info_table, progress_table, step, stop, proceed, var , turn_around_label]
+    process_interface_package = [process_win, info_table, progress_table, step, stop, proceed, var , turn_around_label]
 
     fifo = Fifo(quantum, overload, process_interface_package)
     sjf  = Sjf(quantum, overload, process_interface_package)
@@ -264,4 +285,4 @@ def sheduler_window(num_process, quantum, overload, process_data,process_algorit
     elif process_algorithm == 'EDF':
         edf.Edf(ProcessArray)
 
-    process_window.mainloop()
+    process_win.mainloop()
