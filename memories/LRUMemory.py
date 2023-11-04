@@ -1,44 +1,40 @@
-import tkinter as tk
-from screen import *
-from menuMemoria import *
+from windows.memory import *
 from tkinter import *
 from tkinter import messagebox
 
 def janelaLRU():
-
     def page_fault(pf):
-            
         if pf == "yes":
             texto = "Page Fault"
-            textoPF = Label(memoriaFifo, text=texto, anchor='center', fg='blue', font=('Arial', 13))
+            textoPF = Label(window, text=texto, anchor="center", fg="blue", font=("Arial", 13))
             textoPF.place(x=485, y=185)
 
         if pf == "no":
-            textoPF = Label(memoriaFifo, anchor='center', fg='blue', font=('Arial', 13), text="                  ")
+            textoPF = Label(window, anchor="center", fg="blue", font=("Arial", 13), text="                  ")
             textoPF.place(x=485, y=185)
             textoPF.grid_remove()
 
     def candidato_a_sair():
-        titCandidato = Label(memoriaFifo, text="Valor candidato a sair", anchor='center', fg='black', font=('Arial', 16))
+        titCandidato = Label(window, text="Valor candidato a sair", anchor="center", fg="black", font=("Arial", 16))
         titCandidato.place(x=70, y=130)
 
-        txtCandidato = Label(memoriaFifo, text=mem_fisica[0], anchor='center', fg='red', font=('Arial', 16))
+        txtCandidato = Label(window, text=mem_fisica[0], anchor="center", fg="red", font=("Arial", 16))
         txtCandidato.place(x=150, y=160)
 
         if len(pegarValores) > len(mem_fisica):
             tam = len(pegarValores) - len(mem_fisica)
-            textoForaMem = Label(memoriaFifo, text="Valores retirados da memória: ", anchor='center', fg='red', font=('Arial', 13))
+            textoForaMem = Label(window, text="Valores retirados da memória: ", anchor="center", fg="red", font=("Arial", 13))
             textoForaMem.place(x=335, y=385)
             x=10
             for i in range(tam):              
-                textoForaMem2 = Label(memoriaFifo, text=pegarValores[i], anchor='center', font=('Arial', 13))
+                textoForaMem2 = Label(window, text=pegarValores[i], anchor="center", font=("Arial", 13))
                 textoForaMem2.place(x=x+335, y=405)
                 x+=25
     
     def armazenar_valores():
         if entrada.get() != "":
             adicionar_valor_fis(entrada.get())
-            entrada.delete(0, 'end')
+            entrada.delete(0, "end")
         else:
             messagebox.showinfo("VALOR INVÁLIDO!", "Insira um dado não vazio!")
 
@@ -74,16 +70,16 @@ def janelaLRU():
     # --------------------------------------------------------------------------
 
     # Criar a janela
-    memoriaFifo = tk.Tk()
-    memoriaFifo.title("Simulação de LRU")
-    memoriaFifo.geometry("650x450+500+150")
-    #memoriaFifo.resizable(height=False, width=False)
+    window = Tk()
+    window.title("Simulação de LRU")
+    window.geometry("650x450+500+150")
+    #window.resizable(height=False, width=False)
 
     # Criar o canvas para exibir os quadrados de memoria fisica
-    canvas = tk.Canvas(memoriaFifo, width=100, height=205)
+    canvas = Canvas(window, width=100, height=205)
     canvas.place(x=340, y=160)
     
-    titulo = Label(memoriaFifo, text='Memoria Fisica', anchor='center')
+    titulo = Label(window, text="Memoria Fisica", anchor="center")
     titulo.place(x=340, y=130)
 
     # Criar os quadrados dentro do canvas de memoria fisica
@@ -96,18 +92,18 @@ def janelaLRU():
         y += 25
         
         #imprime o valor de indice ao lado da tabela
-        textoIndice = Label(memoriaFifo, text=i, anchor='center')
+        textoIndice = Label(window, text=i, anchor="center")
         textoIndice.place(x=335, y= y+135)
 
     # Criar os widgets
-    entrada = tk.Entry(memoriaFifo)
+    entrada = Entry(window)
     entrada.place(x=40, y=45)    
 
-    botao_adicionar = tk.Button(memoriaFifo, text="Adicionar", command=armazenar_valores)
+    botao_adicionar = Button(window, text="Adicionar", command=armazenar_valores)
     botao_adicionar.place(x=40, y=15)
 
     mem_fisica   = []
     pegarValores = []
 
     # Iniciar o loop principal
-    memoriaFifo.mainloop()
+    window.mainloop()

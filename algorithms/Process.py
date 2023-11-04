@@ -1,4 +1,4 @@
-class process:
+class Process:
     def __init__(self, StartTime = 0, ExecutionTime = 0, Deadline = 0, Priority = 0, MemoryPages = 0, ProcessId = 0 ):
         self.StartTime = int(StartTime) # tempo que o processo entrou na fila
         self.ExecutionTime = int(ExecutionTime) # tempo para execucao
@@ -14,7 +14,7 @@ class process:
         self.PrintList = []
 
     def clone(self):
-        proc = process()
+        proc = Process()
         proc.ProcessId = self.ProcessId
         proc.StartTime = self.StartTime
         proc.ExecutionTime = self.ExecutionTime

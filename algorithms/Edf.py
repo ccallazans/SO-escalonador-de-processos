@@ -1,14 +1,8 @@
-import time
-import numpy as np
 from os import system, name
 from time import sleep
-
-import tkinter as tk
-from tkinter import *
-from tkinter import ttk
+import numpy as np
 
 class Edf:
-
     ExecutingProcess = None
 
     def __init__(self, Quantum, Overload,process_interface):
@@ -20,16 +14,16 @@ class Edf:
         self.TurnAroundLabel = process_interface[7]
 
     def TurnAround(self, ProcessList):
-       
         Turnaround = 0
+
         for process in ProcessList:
             Turnaround += process.WaitTime + process.ExecutionTime
 
         self.TurnAroundLabel.config(text = "Turn Around = " + str(Turnaround/ProcessList.size) )
+        
         return Turnaround/ProcessList.size
     
     def Edf(self, ProcessArray):
-       
         WorkingArray = np.array([]) # lista de processos que serão executados, mas talvez ainda não esteja prontos
 
         for process in ProcessArray: # copia pq python é so por referencia
@@ -47,7 +41,6 @@ class Edf:
 
         #execuçao dos processos
         while ProcessCount != 0:
-
             for process in WorkingArray:# so coloca na lista de prontos se já chegou
                 if process.StartTime <= TotalTime:
                     ReadyList = np.append(ReadyList, process)
@@ -73,7 +66,6 @@ class Edf:
                     ExecutingProcess.ExecutionTimePerQuantum += 1
                     ExecutingProcess.PrintList.append("X")
 
-
                     if ExecutingProcess != None:
                         self.progress_table.loc[int(ExecutingProcess.ProcessId),TotalTime-1].configure({"background":'Green'}) #Ao ler o processo marca ele como verde
                         for process in ReadyList:
@@ -94,7 +86,6 @@ class Edf:
                     elif ExecutingProcess.ExecutionTimePerQuantum == self.Quantum and self.Overload > 0:# Chega se acabou o tempo dele 
                         ExecutingProcess.ExecutionTimePerQuantum = 0
                         Overloading = True        
-
                 except:
                     pass
 
@@ -102,6 +93,7 @@ class Edf:
                 for process in ReadyList:
                     if (process == ExecutingProcess) or (process.StartTime >= TotalTime):#não conta se é o que ta execuntado ou ainda "não chegou"
                         continue
+
                     process.PrintList.append("O")
                     process.WaitTime += 1
             else:
@@ -114,6 +106,7 @@ class Edf:
                         if process != ExecutingProcess:
                             self.progress_table.loc[int(process.ProcessId),TotalTime-1].configure({"background":'Grey'})
                     self.process_window.update()
+
                 ReadyList = np.delete(ReadyList, np.where(ReadyList == ExecutingProcess))
                 ReadyList = np.append(ReadyList, ExecutingProcess)
 
@@ -121,8 +114,10 @@ class Edf:
                 for process in ReadyList:
                     if process.StartTime > TotalTime:#não sei se é necessario mas ta funcionando com
                         continue
+
                     process.PrintList.append("#")
                     process.WaitTime += 1
+
                 OverloadTime -= 1
                 if OverloadTime <= 0: # terminando overload
                     OverloadTime = self.Overload
@@ -137,7 +132,6 @@ class Edf:
 
             if self.var.get() == 0:
                 self.process_window.wait_variable(self.var)
-
                 
         print("----------------------------------")
 
@@ -160,6 +154,7 @@ class Edf:
         
         for process in ProcessArray:
             print(process.ProcessId, end = "")
+            
             if process.StartTime < TotalTime:
                 for j in range(TotalTime):
                     print(process.PrintList[j], end = "")
@@ -167,8 +162,6 @@ class Edf:
                     print(" Estourou", end="")
 
         self.process_window.update_idletasks()
-        time.sleep(1)
-            
-            
+        sleep(1)
 
         return
