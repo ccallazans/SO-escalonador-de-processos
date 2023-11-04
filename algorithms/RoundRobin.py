@@ -1,14 +1,8 @@
-import time
-import numpy as np
 from os import system, name
 from time import sleep
-
-import tkinter as tk
-from tkinter import *
-from tkinter import ttk
+import numpy as np
 
 class RoundRobin:
-
     ExecutingProcess = None
 
     def __init__(self, Quantum, Overload,process_interface):
@@ -20,15 +14,15 @@ class RoundRobin:
         self.TurnAroundLabel = process_interface[7]
 
     def TurnAround(self, ProcessList):
-
         Turnaround = 0
+
         for process in ProcessList:
             Turnaround += process.WaitTime + process.ExecutionTime
         self.TurnAroundLabel.config(text = "Turn Around = " + str(Turnaround/ProcessList.size) )
+        
         return Turnaround/ProcessList.size
 
     def RoundRobin(self, ProcessArray):
-
         WorkingArray = np.array([]) # lista de processos que serão executados, mas talvez ainda não esteja prontos
 
         for process in ProcessArray: # copia pq python é so por referencia
@@ -53,7 +47,6 @@ class RoundRobin:
                     WorkingArray = np.delete(WorkingArray, np.where(WorkingArray == process))
                     for i in range(TotalTime):
                         process.PrintList.append(" ")
-            
 
             if ExecutingProcess == None: # escolhe o primeiro dos prontos se nenhum estiver sendo executado
                 for process in ReadyList:
@@ -147,8 +140,6 @@ class RoundRobin:
         else:
             _ = system('clear')
 
-       
-        
         for process in ProcessArray:
             print(process.ProcessId, end = "")
             if process.StartTime < TotalTime:
@@ -158,6 +149,6 @@ class RoundRobin:
                     print(" Estourou", end="")
 
         self.process_window.update_idletasks()
-        time.sleep(1)               
+        sleep(1)               
 
         return
