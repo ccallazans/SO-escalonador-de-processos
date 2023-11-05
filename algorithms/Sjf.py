@@ -3,13 +3,13 @@ from time import sleep
 import numpy as np
 
 class Sjf:
-    def __init__(self, Quantum, Overload,process_interface):
+    def __init__(self, Quantum, Overload, process_interface):
         self.Quantum = Quantum
         self.Overload = Overload
         self.process_window = process_interface[0]
-        self.progress_table = process_interface[2]
-        self.var = process_interface[6]
-        self.TurnAroundLabel = process_interface[7]
+        self.progress_table = process_interface[1]
+        self.var = process_interface[2]
+        self.TurnAroundLabel = process_interface[3]
 
     def TurnAround(self, ProcessList):
         Turnaround = 0

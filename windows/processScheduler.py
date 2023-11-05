@@ -127,9 +127,6 @@ def scheduler_window(num_process, quantum, overload, process_data, process_algor
     window.focus()
 
     box_width = 2
-    info_n_rows = num_process 
-    info_n_columns = 6 
-    info_table = pd.DataFrame(index=np.arange(info_n_rows), columns=np.arange(info_n_columns)) #Vai armazenar a tabela de grids
 
     progress_y = y_position + 150
     progress_n_rows = num_process 
@@ -230,7 +227,7 @@ def scheduler_window(num_process, quantum, overload, process_data, process_algor
     print(process_data)
     ProcessArray = [Process(process_data[i][0], process_data[i][1], process_data[i][2], process_data[i][3], process_data[i][4], i) for i in range(num_process)]
 
-    process_interface_package = [window, info_table, progress_table, step, stop, proceed, var , turn_around_label]
+    process_interface_package = [window, progress_table, var, turn_around_label]
 
     fifo = Fifo(quantum, overload, process_interface_package)
     sjf  = Sjf(quantum, overload, process_interface_package)
