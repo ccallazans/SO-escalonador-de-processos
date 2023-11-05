@@ -7,11 +7,11 @@ from tkinter import *
 import pandas as pd
 import numpy as np
 
-processes_data = []
+processesData = []
 quantum = -1
 overload = -1
 
-def process_window(num_process):
+def process_window(numProcess):
     window = Tk()
     window.geometry("800x800")
     window.resizable(True, True)
@@ -37,7 +37,7 @@ def process_window(num_process):
     x_position = 250
 
     processes = []
-    for actual_process in range(num_process):
+    for actual_process in range(numProcess):
         y_position += 150  # Adjust this value as needed
 
         label_process = Label(window, text=f"Id Processo: {actual_process}")
@@ -63,40 +63,40 @@ def process_window(num_process):
         pri_entry = Entry(window, justify="center")
         pri_entry.place(x=x_position + 150, y=y_position + 100)
 
-        if len(processes_data) > 0:
-            init_entry.insert(0, processes_data[actual_process][0])
-            exec_entry.insert(0, processes_data[actual_process][1])
-            dead_entry.insert(0, processes_data[actual_process][2])
-            pri_entry.insert(0, processes_data[actual_process][3])
+        if len(processesData) > 0:
+            init_entry.insert(0, processesData[actual_process][0])
+            exec_entry.insert(0, processesData[actual_process][1])
+            dead_entry.insert(0, processesData[actual_process][2])
+            pri_entry.insert(0, processesData[actual_process][3])
 
         processes.append({"init":init_entry, "exec":exec_entry,"dead":dead_entry,"pri":pri_entry})
 
     algorithm = StringVar()
     algorithm.set("FIFO")
-    proc_menu = OptionMenu(window, algorithm, "FIFO", "SJF", "Round Robin", "EDF")
-    proc_menu.place(x=x_position + 50, y=y_position + 250)
+    algorithmMenu = OptionMenu(window, algorithm, "FIFO", "SJF", "Round Robin", "EDF")
+    algorithmMenu.place(x=x_position + 50, y=y_position + 250)
 
     def simulate():    
-        global processes_data, quantum, overload
+        global processesData, quantum, overload
 
-        processes_data.clear()
+        processesData.clear()
 
         for process in processes:
             data = [process["init"].get(), process["exec"].get(), process["dead"].get(), process["pri"].get(), "1"]
-            processes_data.append(data)
+            processesData.append(data)
 
         quantum = int(quantum_input.get())
         overload = int(overload_input.get())
 
         window.destroy()
-        scheduler_window(num_process, quantum, overload, processes_data, algorithm.get())
+        scheduler_window(numProcess, quantum, overload, processesData, algorithm.get())
 
     proceed = Button(window, text="Simular", command=simulate)
     proceed.place(x=x_position + 130, y=y_position + 250)
 
     window.mainloop()
 
-def scheduler_window(num_process, quantum, overload, processes_data, process_algorithm):
+def scheduler_window(numProcess, quantum, overload, processesData, processAlgorithm):
     window = Tk()
     screen_width = window.winfo_screenwidth()
     screen_height = window.winfo_screenheight()
@@ -105,13 +105,13 @@ def scheduler_window(num_process, quantum, overload, processes_data, process_alg
     window.configure(bg="#bcbcbc")
     window.focus()
 
-    print(num_process)
+    print(numProcess)
     y_position = 40
     x_position = 200
     box_width = 2
 
     progress_y = y_position + 150
-    progress_n_rows = num_process 
+    progress_n_rows = numProcess 
     progress_n_columns = 50 
     progress_table = pd.DataFrame(index=np.arange(progress_n_rows), columns=np.arange(progress_n_columns)) #Vai armazenar a tabela de grids
 
@@ -128,7 +128,7 @@ def scheduler_window(num_process, quantum, overload, processes_data, process_alg
                 progress_table.loc[i,j].grid(row=i, column=j, pady=(progress_y, 0))
 
     y = progress_y + 5
-    for k in range(num_process):
+    for k in range(numProcess):
         lb = Label(window, text=str(k), font=("Arial", 8))
         lb.place(x=x_position-30, y=y)
         y = y + 28
@@ -188,7 +188,7 @@ def scheduler_window(num_process, quantum, overload, processes_data, process_alg
     
     def back():
         window.destroy()
-        process_window(num_process)
+        process_window(numProcess)
 
     step = Button(window,text =" Passo a Passo ", command = stepByStep)
     step.place(x=x_position, y=progress_y - 90)
@@ -206,9 +206,9 @@ def scheduler_window(num_process, quantum, overload, processes_data, process_alg
     voltar = Button(window,text =" Voltar ", command = back)
     voltar.place(x=x_position, y=progress_y - 55)
 
-    print(num_process)
-    print(processes_data)
-    ProcessArray = [Process(processes_data[i][0], processes_data[i][1], processes_data[i][2], processes_data[i][3], processes_data[i][4], i) for i in range(num_process)]
+    print(numProcess)
+    print(processesData)
+    ProcessArray = [Process(processesData[i][0], processesData[i][1], processesData[i][2], processesData[i][3], processesData[i][4], i) for i in range(numProcess)]
 
     process_interface_package = [window, progress_table, var, turn_around_label]
 
@@ -217,14 +217,14 @@ def scheduler_window(num_process, quantum, overload, processes_data, process_alg
     rr   = RoundRobin(quantum, overload, process_interface_package)
     edf  = Edf(quantum, overload, process_interface_package)
 
-    print(process_algorithm)
-    if process_algorithm == "FIFO":
+    print(processAlgorithm)
+    if processAlgorithm == "FIFO":
         fifo.FIFO(ProcessArray)
-    elif process_algorithm == "SJF":
+    elif processAlgorithm == "SJF":
         sjf.Sjf(ProcessArray)
-    elif process_algorithm == "Round Robin":
+    elif processAlgorithm == "Round Robin":
         rr.RoundRobin(ProcessArray)
-    elif process_algorithm == "EDF":
+    elif processAlgorithm == "EDF":
         edf.Edf(ProcessArray)
 
     window.mainloop()
