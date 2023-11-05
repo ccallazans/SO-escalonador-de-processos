@@ -7,9 +7,9 @@ from tkinter import *
 import pandas as pd
 import numpy as np
 
-prev_proccess_data = []
-prev_quantum = []
-prev_overload = []
+processes_data = []
+quantum = -1
+overload = -1
 
 def process_window(num_process):
     window = Tk()
@@ -22,23 +22,21 @@ def process_window(num_process):
     quantum_input = Entry(justify="center")
     quantum_input.place(x=70, y=120)
 
-    if len(prev_quantum) > 0:
-        quantum_input.insert(0, prev_quantum[0])
+    if quantum >= 0:
+        quantum_input.insert(0, quantum)
 
     overload_label = Label(window, text="Sobrecarga", anchor="center")
     overload_label.place(x=70, y=180)
     overload_input = Entry(justify="center")
     overload_input.place(x=70, y=220)
 
-    if len(prev_overload) > 0:
-        overload_input.insert(0, prev_overload[0])
-
-    process_data = []
+    if overload >= 0:
+        overload_input.insert(0, overload)
 
     y_position = 30
     x_position = 250
 
-    procs = []
+    processes = []
     for actual_process in range(num_process):
         y_position += 150  # Adjust this value as needed
 
@@ -65,59 +63,40 @@ def process_window(num_process):
         pri_entry = Entry(window, justify="center")
         pri_entry.place(x=x_position + 150, y=y_position + 100)
 
-        if len(prev_proccess_data) > 0:
-            init_entry.insert(0, prev_proccess_data[actual_process][0])
-            exec_entry.insert(0, prev_proccess_data[actual_process][1])
-            dead_entry.insert(0, prev_proccess_data[actual_process][2])
-            pri_entry.insert(0, prev_proccess_data[actual_process][3])
+        if len(processes_data) > 0:
+            init_entry.insert(0, processes_data[actual_process][0])
+            exec_entry.insert(0, processes_data[actual_process][1])
+            dead_entry.insert(0, processes_data[actual_process][2])
+            pri_entry.insert(0, processes_data[actual_process][3])
 
-        procs.append({"init":init_entry, "exec":exec_entry,"dead":dead_entry,"pri":pri_entry})
+        processes.append({"init":init_entry, "exec":exec_entry,"dead":dead_entry,"pri":pri_entry})
 
-    def save_data():
-        prev_proccess_data.clear()
-        process_data.clear()
-
-        for p in procs:
-            data = [
-                p["init"].get(),
-                p["exec"].get(),
-                p["dead"].get(),
-                p["pri"].get(),
-                "1"
-            ]
-            prev_proccess_data.append(data)
-            process_data.append(data)
-
-    process = StringVar()
-    process.set("FIFO")
-    proc_menu = OptionMenu(window, process, "FIFO", "SJF", "Round Robin", "EDF")
+    algorithm = StringVar()
+    algorithm.set("FIFO")
+    proc_menu = OptionMenu(window, algorithm, "FIFO", "SJF", "Round Robin", "EDF")
     proc_menu.place(x=x_position + 50, y=y_position + 250)
 
-    def transfer_data():    
-        save_data()
+    def simulate():    
+        global processes_data, quantum, overload
+
+        processes_data.clear()
+
+        for process in processes:
+            data = [process["init"].get(), process["exec"].get(), process["dead"].get(), process["pri"].get(), "1"]
+            processes_data.append(data)
 
         quantum = int(quantum_input.get())
         overload = int(overload_input.get())
 
-        prev_quantum.clear()
-        prev_overload.clear()
-
-        prev_quantum.append(quantum)
-        prev_overload.append(overload)
-
         window.destroy()
-        scheduler_window(num_process, quantum, overload, process_data, process.get())
+        scheduler_window(num_process, quantum, overload, processes_data, algorithm.get())
 
-    proceed = Button(window, text="Simular", command=transfer_data)
+    proceed = Button(window, text="Simular", command=simulate)
     proceed.place(x=x_position + 130, y=y_position + 250)
 
     window.mainloop()
 
-def scheduler_window(num_process, quantum, overload, process_data, process_algorithm):
-    print(num_process)
-    y_position = 40
-    x_position = 200
-
+def scheduler_window(num_process, quantum, overload, processes_data, process_algorithm):
     window = Tk()
     screen_width = window.winfo_screenwidth()
     screen_height = window.winfo_screenheight()
@@ -126,6 +105,9 @@ def scheduler_window(num_process, quantum, overload, process_data, process_algor
     window.configure(bg="#bcbcbc")
     window.focus()
 
+    print(num_process)
+    y_position = 40
+    x_position = 200
     box_width = 2
 
     progress_y = y_position + 150
@@ -138,20 +120,32 @@ def scheduler_window(num_process, quantum, overload, process_data, process_algor
             progress_table.loc[i,j] = Entry(window, width=1, fg="black", font=("Arial", 16, "bold"))
 
             if j == 0:
-                progress_table.loc[i,j].grid(row=i, column=j, padx=(x_position,0))
+                progress_table.loc[i,j].grid(row=i, column=j, padx=(x_position, 0))
             else:
                 progress_table.loc[i,j].grid(row=i, column=j)
 
-            if i ==0:
-                progress_table.loc[i,j].grid(row=i, column=j, pady=(progress_y,0))
+            if i == 0:
+                progress_table.loc[i,j].grid(row=i, column=j, pady=(progress_y, 0))
 
     y = progress_y + 5
-    for k in range(num_process): 
+    for k in range(num_process):
         lb = Label(window, text=str(k), font=("Arial", 8))
         lb.place(x=x_position-30, y=y)
         y = y + 28
+
         lb.configure(bg="#cf9416")
 
+    x = x_position
+    for k in range(progress_n_columns + 1):
+        lb = Label(window, text=str(k), font=("Arial", 8))
+        lb.place(x=x, y=progress_y - 22)
+
+        if k < 10:
+            x += 15
+        else:
+            x += 16
+
+        lb.configure(bg="#cf9416")
 
     guide_exec = Entry(window, width=box_width, fg="black", font=("Arial",8))
     guide_exec.grid(row=0, column=0, padx=(x_position-100))
@@ -181,51 +175,40 @@ def scheduler_window(num_process, quantum, overload, process_data, process_algor
     guide_exec_lb.place(x=x_position-80, y=143)
     guide_exec_lb.configure(bg="#cf9416")
 
-    x = x_position
-    for k in range(progress_n_columns+1): 
-        lb = Label(window, text=str(k), font=("Arial", 8))
-        lb.place(x=x, y=progress_y - 22)
-
-        if k < 10:
-            x += 15
-        else:
-            x += 16
-
-        lb.configure(bg="#cf9416")
-
     var = IntVar()
     var.set(0)
 
-    def Step():
+    def stepByStep():
         var.set(0)
         return
-    def Auto():
+
+    def automatic():
         var.set(1)
         return   
     
-    def call_open2():
+    def back():
         window.destroy()
         process_window(num_process)
 
-    step = Button(window,text =" passo-a-passo ", command = Step)
+    step = Button(window,text =" Passo a Passo ", command = stepByStep)
     step.place(x=x_position, y=progress_y - 90)
 
-    stop = Button(window,text =" pause ", command = Step)
+    stop = Button(window,text =" Pausar ", command = stepByStep)
     stop.place(x=x_position + 120, y=progress_y - 90)
 
-    proceed = Button(window,text =" total ", command = Auto)
+    proceed = Button(window,text =" Automático ", command = automatic)
     proceed.place(x=x_position + 190, y=progress_y - 90)
 
     turn_around_label = Label(window, text="", font=("Arial", 13))
     turn_around_label.place(x=x_position + 290, y=progress_y - 90)
     turn_around_label.configure(bg="#cf9416")
 
-    voltar = Button(window,text =" voltar ", command = call_open2)
+    voltar = Button(window,text =" Voltar ", command = back)
     voltar.place(x=x_position, y=progress_y - 55)
 
     print(num_process)
-    print(process_data)
-    ProcessArray = [Process(process_data[i][0], process_data[i][1], process_data[i][2], process_data[i][3], process_data[i][4], i) for i in range(num_process)]
+    print(processes_data)
+    ProcessArray = [Process(processes_data[i][0], processes_data[i][1], processes_data[i][2], processes_data[i][3], processes_data[i][4], i) for i in range(num_process)]
 
     process_interface_package = [window, progress_table, var, turn_around_label]
 
