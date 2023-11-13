@@ -1,5 +1,11 @@
 # Escalonador de Processos
 
+## Grupo do Trabalho
+### Ciro Callazans
+### Lucas Lima
+### Matheus Salaroli
+
+
 ## Instalar dependências
 
 ```bash

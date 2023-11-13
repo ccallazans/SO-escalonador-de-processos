@@ -29,17 +29,6 @@ class Process:
         return proc
 
     def print_process(self):
-        # aqui da pra quebra linha
-        # no de baixo não
-        # qual usar ?(- Fernando)
-        # print(  "ProcessId: " + str(self.ProcessId) +
-        #         " Chegada: " + str(self.StartTime) + 
-        #         " Job: " + str(self.ExecutionTime) + 
-        #         " Tempo executado : " + str(self.ExecutedTime) + 
-        #         " Tempo de Espera : " + str(self.WaitTime) + 
-        #         ("   Estourou Deadline" if not self.MetDeadline else "") )        
-
-        #print em uma linha
         print(  f"ProcessId: {str(self.ProcessId)}" 
                 f" Chegada: {str(self.StartTime)}" 
                 f" Job: {str(self.ExecutionTime)}"

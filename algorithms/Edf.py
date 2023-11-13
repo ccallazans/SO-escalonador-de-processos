@@ -112,7 +112,7 @@ class Edf:
 
                 
                 for process in ReadyList:
-                    if process.StartTime > TotalTime:#não sei se é necessario mas ta funcionando com
+                    if process.StartTime > TotalTime:
                         continue
 
                     process.PrintList.append("#")
