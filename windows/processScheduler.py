@@ -212,8 +212,8 @@ def scheduler_window(numProcess, quantum, overload, processesData, processAlgori
 
     process_interface_package = [window, progress_table, var, turn_around_label]
 
-    fifo = Fifo(quantum, overload, process_interface_package)
-    sjf  = Sjf(quantum, overload, process_interface_package)
+    fifo = Fifo(process_interface_package)
+    sjf  = Sjf(process_interface_package)
     rr   = RoundRobin(quantum, overload, process_interface_package)
     edf  = Edf(quantum, overload, process_interface_package)
 

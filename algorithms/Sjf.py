@@ -3,9 +3,7 @@ from time import sleep
 import numpy as np
 
 class Sjf:
-    def __init__(self, Quantum, Overload, process_interface):
-        self.Quantum = Quantum
-        self.Overload = Overload
+    def __init__(self, process_interface):
         self.process_window = process_interface[0]
         self.progress_table = process_interface[1]
         self.var = process_interface[2]
