@@ -1,4 +1,3 @@
-from os import system, name
 from time import sleep
 import numpy as np
 
@@ -16,16 +15,15 @@ class Fifo:
 
         for process in ProcessList:
             Turnaround += process.WaitTime + process.ExecutionTime
-        self.TurnAroundLabel.config(text = "Turn Around = " + str(Turnaround/ProcessList.size))
 
-        return Turnaround/ProcessList.size
+        self.TurnAroundLabel.config(text = "Turn Around = " + str(Turnaround/ProcessList.size))
     
       # Escalonamento
     def FIFO(self, ProcessArray):
         CopyArray = np.array([])
 
         for process in ProcessArray: # copia pq python é so por referencia
-            CopyArray = np.append(CopyArray, process.clone() )
+            CopyArray = np.append(CopyArray, process.clone())
 
         WorkingList = np.array(CopyArray) # lista de processos que serão executados, mas talvez ainda não esteja prontos
         TotalTime = 0 # conta o tempo decorrido
@@ -39,8 +37,6 @@ class Fifo:
                 if process.StartTime <= TotalTime:
                     ReadyList = np.append(ReadyList, process)
                     WorkingList = np.delete(WorkingList, np.where(WorkingList == process))
-                    for i in range(TotalTime):
-                        process.PrintList.append(" ")
 
             #Escolhe o proximo
             if ExecutingProcess == None: # so escolhe o proximo se nenhum estiver sendo executado
@@ -77,44 +73,11 @@ class Fifo:
                 process.PrintList.append("O")
                 process.WaitTime += 1
 
-            for process in CopyArray:
-                for i in range(process.WaitTime + process.ExecutedTime + process.StartTime ,TotalTime):
-                    process.PrintList.append(" ")
-            self.PrintProcess(CopyArray, TotalTime)
+            sleep(1)
             
             if self.var.get() == 0:
                 self.process_window.wait_variable(self.var)
         
-        print("----------------------------------")
-
-        print(f"Tempo total : {str(TotalTime)}")
-        print("----------------------------------")
-        
-
-        print(f"Turnaround : {str(self.TurnAround(CopyArray))}")
-        print("----------------------------------")
-        return
-    
-    def PrintProcess(self,ProcessArray, TotalTime):
-        # for windows
-        if name == "nt":
-            _ = system("cls")
-    
-        # for mac and linux(here, os.name is "posix")
-        else:
-            _ = system("clear")
-
-       
-        
-        for process in ProcessArray:
-            print(process.ProcessId, end = "")
-            if process.StartTime < TotalTime:
-                for j in range(TotalTime):
-                    print(process.PrintList[j], end = "")
-                if not process.MetDeadline:
-                    print(" Estourou", end="")
-
-        self.process_window.update_idletasks()
-        sleep(1)
+        self.TurnAround(CopyArray)
 
         return
