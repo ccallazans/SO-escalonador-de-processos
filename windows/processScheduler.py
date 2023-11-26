@@ -3,7 +3,6 @@ from algorithms.Fifo import Fifo
 from algorithms.Sjf import Sjf
 from algorithms.RoundRobin import RoundRobin
 from algorithms.Edf import Edf
-from windows.memory import janelaFifo
 from tkinter import *
 import pandas as pd
 import numpy as np
@@ -225,12 +224,12 @@ def scheduler_window(numProcess, quantum, overload, processesData, processAlgori
 
     ##########################
 
-    if select_memory == "FIFO":
-        janelaFifo(pagina, window)
+    # if select_memory == "FIFO":
+    #     janelaFifo(pagina, window)
 
     ##########################
 
-    process_interface_package = [window, progress_table, var, turn_around_label]
+    process_interface_package = [window, progress_table, var, turn_around_label, select_memory, pagina]
 
     fifo = Fifo(process_interface_package)
     sjf  = Sjf(process_interface_package)

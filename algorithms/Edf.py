@@ -11,6 +11,7 @@ class Edf:
         self.progress_table = process_interface[1]
         self.var = process_interface[2]
         self.TurnAroundLabel = process_interface[3]
+        self.alg_memoria = process_interface[4]
 
     def TurnAround(self, ProcessList):
         Turnaround = 0
