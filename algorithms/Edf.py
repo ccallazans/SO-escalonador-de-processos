@@ -24,17 +24,17 @@ class Edf:
         return Turnaround/ProcessList.size
     
     def Edf(self, ProcessArray):
-        WorkingArray = np.array([]) # lista de processos que serão executados, mas talvez ainda não esteja prontos
+        WorkingArray = np.array([]) # lista de processos que serão executados
 
-        for process in ProcessArray: # copia pq python é so por referencia
+        for process in ProcessArray:
             WorkingArray = np.append(WorkingArray, process.clone() )
 
-        CopyArray = np.array(WorkingArray)
+        ProcessArrayCopy = np.array(WorkingArray)
 
         ReadyList = np.array([]) # lista de prontos
-        TotalTime = 0 # tempo decorrido
-        ProcessCount = WorkingArray.size
-        ExecutingProcess = None # processo no estado executando
+        TotalTime = 0 # conta o tempo decorrido
+        ProcessCount = WorkingArray.size # quantidade de processos
+        ExecutingProcess = None # processo em execução
 
         Overloading = False
         OverloadTime = self.Overload
@@ -48,12 +48,12 @@ class Edf:
                     for i in range(TotalTime):
                         process.PrintList.append(" ")
 
-            if ExecutingProcess == None: # so escolhe o proximo se nenhum estiver sendo executado
+            if ExecutingProcess == None:  # so escolhe o proximo se nenhum estiver sendo executado
                 for process in ReadyList:
-                    if process.StartTime <= TotalTime : # so escolhe o proximo caso alguem ja tenho chegado
+                    if process.StartTime <= TotalTime : # so escolhe o proximo processo caso alguem ja tenho chegado
                         if ExecutingProcess == None: # escolhe o 1 para comparação
                             ExecutingProcess = process
-                        else: # encontra o deadline mais ceda dos que ja chegaram
+                        else: # encontra o deadline mais cede dos que ja chegaram
                             if process.Deadline - (TotalTime - process.StartTime)  < ExecutingProcess.Deadline - (TotalTime - ExecutingProcess.StartTime):
                                 ExecutingProcess = process
 
@@ -91,7 +91,7 @@ class Edf:
 
                 #Tempo de espera para calculo de turnaround
                 for process in ReadyList:
-                    if (process == ExecutingProcess) or (process.StartTime >= TotalTime):#não conta se é o que ta execuntado ou ainda "não chegou"
+                    if (process == ExecutingProcess) or (process.StartTime >= TotalTime): # não conta caso esteja executando ou ainda "não chegou"
                         continue
 
                     process.PrintList.append("O")
@@ -99,8 +99,6 @@ class Edf:
             else:
                 #print("Overloading")
                 if ExecutingProcess != None:
-                    print(f'TotalTime: {TotalTime}') #Codigo de debug
-                    print(f'ProcessId: {int(ExecutingProcess.ProcessId)}') #Codigo de debug
                     self.progress_table.loc[int(ExecutingProcess.ProcessId),TotalTime-1].configure({"background":'Red'}) #Ao ler o processo marca ele como vermelho
                     for process in ReadyList:
                         if process != ExecutingProcess:
@@ -124,44 +122,11 @@ class Edf:
                     ExecutingProcess = None
                     Overloading = False
                 
-            for process in CopyArray:
+            for process in ProcessArrayCopy:
                 for i in range(process.WaitTime + process.ExecutedTime + process.StartTime ,TotalTime):
                     process.PrintList.append(" ")
-            
-            self.PrintProcess(CopyArray, TotalTime)
 
             if self.var.get() == 0:
                 self.process_window.wait_variable(self.var)
                 
-        print("----------------------------------")
-
-        print(f"Tempo total : {str(TotalTime)}")
-        print("----------------------------------")
-        
-
-        print(f"Turnaround : {str(self.TurnAround(CopyArray))}")
-        print("----------------------------------")
-        return
-    
-    def PrintProcess(self,ProcessArray, TotalTime):
-        # for windows
-        if name == 'nt':
-            _ = system('cls')
-    
-        # for mac and linux(here, os.name is 'posix')
-        else:
-            _ = system('clear')
-        
-        for process in ProcessArray:
-            print(process.ProcessId, end = "")
-            
-            if process.StartTime < TotalTime:
-                for j in range(TotalTime):
-                    print(process.PrintList[j], end = "")
-                if not process.MetDeadline:
-                    print(" Estourou", end="")
-
-        self.process_window.update_idletasks()
-        sleep(1)
-
         return

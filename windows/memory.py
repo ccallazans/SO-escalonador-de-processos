@@ -5,15 +5,15 @@ from tkinter import *
 
 def menuMemoria():
     window = Tk()
-    window.geometry("400x400+500+150")
-    window.resizable(height=False, width=False)
-    window.configure(bg="#cf9416")
+    window.geometry("700x700")
+    window.resizable(True, True)
+    window.configure(bg="#bcbcbc")
 
     lbl1 = Label(window, text="Quantidade de páginas", anchor="center")
     lbl1.place(x=70, y=120)
     ent1 = Entry(justify="center")
-    ent1.place(x=200, y=120)
-    lbl1.configure(bg="#cf9416")
+    ent1.place(x=250, y=120)
+    window.configure(bg="#bcbcbc")
 
     def chamarEscal():
         if ent1.get() != "":
@@ -26,14 +26,14 @@ def menuMemoria():
 
     lbl2 = Label(window, text="Processo de escalonamento", anchor="center")
     lbl2.place(x=40, y=250)
-    lbl2.configure(bg="#cf9416")
+    window.configure(bg="#bcbcbc")
 
     processo = StringVar()
     processo.set("FIFO")
     proc_menu = OptionMenu(window, processo, "FIFO", "LRU")
-    proc_menu.place(x=200, y=250)
+    proc_menu.place(x=250, y=250)
 
     botao_avancar = Button(window, text="Avançar", command=chamarEscal)
-    botao_avancar.place(x=200, y=150)
+    botao_avancar.place(x=250, y=150)
 
     window.mainloop()

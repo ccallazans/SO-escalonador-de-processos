@@ -23,16 +23,16 @@ class RoundRobin:
         return Turnaround/ProcessList.size
 
     def RoundRobin(self, ProcessArray):
-        WorkingArray = np.array([]) # lista de processos que serão executados, mas talvez ainda não esteja prontos
+        WorkingArray = np.array([]) # lista de processos que serão executados
 
-        for process in ProcessArray: # copia pq python é so por referencia
+        for process in ProcessArray:
             WorkingArray = np.append(WorkingArray, process.clone() )
 
-        CopyArray = np.array(WorkingArray)
+        ProcessArrayCopy = np.array(WorkingArray)
 
         ReadyList = np.array([]) # lista de prontos
         TotalTime = 0 # conta tempo decorrido
-        ProcessCount = WorkingArray.size # qtd de processos a serem executados
+        ProcessCount = WorkingArray.size # quantidade de processos
         ExecutingProcess = None # processo no estado executando
 
         Overloading = False
@@ -74,7 +74,7 @@ class RoundRobin:
                             ExecutingProcess = None
                             ProcessCount -= 1        
 
-                    elif ExecutingProcess.ExecutionTimePerQuantum == self.Quantum and self.Overload > 0: # Chega se acabou o tempo dele 
+                    elif ExecutingProcess.ExecutionTimePerQuantum == self.Quantum and self.Overload > 0: # Checa se acabou o tempo dele 
                         ExecutingProcess.ExecutionTimePerQuantum = 0
                         Overloading = True        
 
@@ -83,7 +83,7 @@ class RoundRobin:
 
                 #Tempo de espera para calculo de turnaround
                 for process in ReadyList:
-                    if (process == ExecutingProcess) or (process.StartTime >= TotalTime):#não conta se é o que ta execuntado ou ainda "não chegou"
+                    if (process == ExecutingProcess) or (process.StartTime >= TotalTime): # não conta caso esteja executando ou ainda "não chegou"
                         continue
                     process.PrintList.append("O")
                     process.WaitTime += 1
@@ -100,7 +100,7 @@ class RoundRobin:
 
                 
                 for process in ReadyList:
-                    if process.StartTime > TotalTime:#não sei se é necessario mas ta funcionando com
+                    if process.StartTime > TotalTime:
                         continue
                     process.PrintList.append("#")
                     process.WaitTime += 1
@@ -111,44 +111,11 @@ class RoundRobin:
                     ExecutingProcess = None
                     Overloading = False
               
-            for process in CopyArray:
+            for process in ProcessArrayCopy:
                 for i in range(process.WaitTime + process.ExecutedTime + process.StartTime ,TotalTime):
                     process.PrintList.append(" ")
-            
-            self.PrintProcess(CopyArray, TotalTime)
 
             if self.var.get() == 0:
                 self.process_window.wait_variable(self.var)
-
-                
-        print("----------------------------------")
-        
-        print(f"Tempo total : {str(TotalTime)}")
-        print("----------------------------------")
-        
-
-        print(f"Turnaround : {str(self.TurnAround(CopyArray))}")
-        print("----------------------------------")
-        return
-    
-    def PrintProcess(self,ProcessArray, TotalTime):
-        # for windows
-        if name == 'nt':
-            _ = system('cls')
-    
-        # for mac and linux(here, os.name is 'posix')
-        else:
-            _ = system('clear')
-
-        for process in ProcessArray:
-            print(process.ProcessId, end = "")
-            if process.StartTime < TotalTime:
-                for j in range(TotalTime):
-                    print(process.PrintList[j], end = "")
-                if not process.MetDeadline:
-                    print(" Estourou", end="")
-
-        self.process_window.update_idletasks()
-        sleep(1)               
 
         return
