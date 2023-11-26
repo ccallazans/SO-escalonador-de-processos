@@ -2,7 +2,7 @@ from windows.memory import *
 from tkinter import *
 from tkinter import messagebox
 
-def janelaFifo(num_pag):
+def janelaFifo(num_pag, janela_anterior):
     numPag = num_pag
 
     def page_fault(pf):
@@ -89,9 +89,9 @@ def janelaFifo(num_pag):
     # --------------------------------------------------------------------------
 
     # Criar a janela
-    window = Tk()
-    window.title("Simulação de FIFO")
-    window.geometry("750x650+500+150")
+    window = janela_anterior
+    # window.title("Simulação de FIFO")
+    # window.geometry("750x650+500+150")
     #window.resizable(height=False, width=False)
 
     # Criar o canvas para exibir os quadrados de memoria fisica
