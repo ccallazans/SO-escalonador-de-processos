@@ -126,7 +126,11 @@ class Edf:
                 for i in range(process.WaitTime + process.ExecutedTime + process.StartTime ,TotalTime):
                     process.PrintList.append(" ")
 
+            sleep(1)
+
             if self.var.get() == 0:
                 self.process_window.wait_variable(self.var)
+
+        self.TurnAround(ProcessArrayCopy)
                 
         return
