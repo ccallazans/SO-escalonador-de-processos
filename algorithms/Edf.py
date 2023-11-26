@@ -1,4 +1,3 @@
-from os import system, name
 from time import sleep
 import numpy as np
 
@@ -19,7 +18,7 @@ class Edf:
         for process in ProcessList:
             Turnaround += process.WaitTime + process.ExecutionTime
 
-        self.TurnAroundLabel.config(text = "Turn Around = " + str(Turnaround/ProcessList.size) )
+        self.TurnAroundLabel.config(text = "Turn Around = " + str(Turnaround/ProcessList.size))
         
         return Turnaround/ProcessList.size
     
@@ -27,7 +26,7 @@ class Edf:
         WorkingArray = np.array([]) # lista de processos que serão executados
 
         for process in ProcessArray:
-            WorkingArray = np.append(WorkingArray, process.clone() )
+            WorkingArray = np.append(WorkingArray, process.clone())
 
         ProcessArrayCopy = np.array(WorkingArray)
 
@@ -41,12 +40,15 @@ class Edf:
 
         #execuçao dos processos
         while ProcessCount != 0:
+            sleep(1)
+
+            if self.var.get() == 0:
+                self.process_window.wait_variable(self.var)
+
             for process in WorkingArray:# so coloca na lista de prontos se já chegou
                 if process.StartTime <= TotalTime:
                     ReadyList = np.append(ReadyList, process)
                     WorkingArray = np.delete(WorkingArray, np.where(WorkingArray == process))
-                    for i in range(TotalTime):
-                        process.PrintList.append(" ")
 
             if ExecutingProcess == None:  # so escolhe o proximo se nenhum estiver sendo executado
                 for process in ReadyList:
@@ -64,7 +66,6 @@ class Edf:
                 try:
                     ExecutingProcess.ExecutedTime += 1
                     ExecutingProcess.ExecutionTimePerQuantum += 1
-                    ExecutingProcess.PrintList.append("X")
 
                     if ExecutingProcess != None:
                         self.progress_table.loc[int(ExecutingProcess.ProcessId),TotalTime-1].configure({"background":'Green'}) #Ao ler o processo marca ele como verde
@@ -94,15 +95,14 @@ class Edf:
                     if (process == ExecutingProcess) or (process.StartTime >= TotalTime): # não conta caso esteja executando ou ainda "não chegou"
                         continue
 
-                    process.PrintList.append("O")
                     process.WaitTime += 1
             else:
-                #print("Overloading")
+                # Overloading
                 if ExecutingProcess != None:
-                    self.progress_table.loc[int(ExecutingProcess.ProcessId),TotalTime-1].configure({"background":'Red'}) #Ao ler o processo marca ele como vermelho
+                    self.progress_table.loc[int(ExecutingProcess.ProcessId), TotalTime - 1].configure({"background":'Red'}) #Ao ler o processo marca ele como vermelho
                     for process in ReadyList:
                         if process != ExecutingProcess:
-                            self.progress_table.loc[int(process.ProcessId),TotalTime-1].configure({"background":'Grey'})
+                            self.progress_table.loc[int(process.ProcessId), TotalTime - 1].configure({"background":'Grey'})
                     self.process_window.update()
 
                 ReadyList = np.delete(ReadyList, np.where(ReadyList == ExecutingProcess))
@@ -112,8 +112,6 @@ class Edf:
                 for process in ReadyList:
                     if process.StartTime > TotalTime:
                         continue
-
-                    process.PrintList.append("#")
                     process.WaitTime += 1
 
                 OverloadTime -= 1
@@ -121,15 +119,6 @@ class Edf:
                     OverloadTime = self.Overload
                     ExecutingProcess = None
                     Overloading = False
-                
-            for process in ProcessArrayCopy:
-                for i in range(process.WaitTime + process.ExecutedTime + process.StartTime ,TotalTime):
-                    process.PrintList.append(" ")
-
-            sleep(1)
-
-            if self.var.get() == 0:
-                self.process_window.wait_variable(self.var)
 
         self.TurnAround(ProcessArrayCopy)
                 
