@@ -1,5 +1,4 @@
 from tkinter import *
-from windows.memory import menuMemoria
 from windows.processScheduler import process_window
 
 def window():
@@ -8,13 +7,6 @@ def window():
     window.geometry("700x700")
     window.resizable(True, True)
     window.configure(bg="#bcbcbc")
-
-    def chamarMemoria():
-        window.destroy()
-        menuMemoria()
-
-    memory_button = Button(window, text ="Memória", command = chamarMemoria)
-    memory_button.place(x=70, y=70)
 
     process_label = Label(window, text="Qtd de processos:", anchor="center")
     process_label.place(x=70, y=120)

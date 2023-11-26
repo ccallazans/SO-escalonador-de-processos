@@ -1,11 +1,10 @@
-from windows.memory import *
+# from windows.memory import *
 from tkinter import *
 from tkinter import messagebox
 import pandas as pd
 import numpy as np
 
-def janelaFifo(num_pag, janela_anterior):
-    numPag = num_pag
+def janelaFifo(janela_anterior):
     # --------------------------------------------------------------------------
 
     # Criar a janela

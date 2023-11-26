@@ -1,6 +1,7 @@
 from time import sleep
 import numpy as np
 from memories.FifoMemory import adicionar_valor_fis, adicionar_valor_vir
+from memories.LRUMemory import adicionar_valor_fis_lru, janelaLRU
 from windows.memory import janelaFifo
 
 class RoundRobin:
@@ -27,7 +28,9 @@ class RoundRobin:
 
     def RoundRobin(self, ProcessArray):
         if self.alg_memoria == "FIFO":
-            canvas, quadrados, canvas2, quadrados2, mem_fisica, mem_virtual, pegarValores = janelaFifo(10, self.process_window)
+            canvas, quadrados, canvas2, quadrados2, mem_fisica, mem_virtual, pegarValores = janelaFifo(self.process_window)
+        elif self.alg_memoria == "LRU":
+            canvas, quadrados, canvas2, quadrados2, mem_fisica, mem_virtual, pegarValores = janelaLRU(self.process_window)
 
         WorkingArray = np.array([]) # lista de processos que serão executados
 
@@ -66,7 +69,11 @@ class RoundRobin:
             # Executando
             if not Overloading:
                 if ExecutingProcess != None:
-                    adicionar_valor_fis(self.process_window, int(ExecutingProcess.ProcessId), mem_fisica, mem_virtual, pegarValores, canvas, quadrados, self.num_paginas, canvas2, quadrados2)
+                    if self.alg_memoria == "FIFO":
+                        adicionar_valor_fis(self.process_window, int(ExecutingProcess.ProcessId), mem_fisica, mem_virtual, pegarValores, canvas, quadrados, self.num_paginas, canvas2, quadrados2)
+                    elif self.alg_memoria == "LRU":
+                        adicionar_valor_fis_lru(self.process_window, int(ExecutingProcess.ProcessId), mem_fisica, pegarValores, canvas, quadrados, self.num_paginas)
+                
                     self.progress_table.loc[int(ExecutingProcess.ProcessId), TotalTime - 1].configure({"background":'Green'}) #Ao ler o processo marca ele como verde
                     for process in ReadyList:
                         if process != ExecutingProcess:
