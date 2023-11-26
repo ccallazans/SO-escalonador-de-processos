@@ -52,17 +52,6 @@ def janelaFifo(num_pag, janela_anterior):
     return canvas, quadrados, canvas2, quadrados2, mem_fisica, mem_virtual, pegarValores
 
 
-# def page_fault(window, pf):
-#     if pf == "yes":
-#         texto = "Page Fault"
-#         textoPF = Label(window, text=texto, anchor="center", fg="blue", font=("Arial", 13))
-#         textoPF.place(x=485, y=185)
-
-#     if pf == "no":
-#         textoPF = Label(window, anchor="center", fg="blue", font=("Arial", 13), text="                  ")
-#         textoPF.place(x=485, y=185)
-#         textoPF.grid_remove()
-
 #Adiciona valor na memoria virtual
 def adicionar_valor_vir(window, mem_virtual, canvas2, quadrados2, num_processo):
     y = 10
@@ -73,11 +62,6 @@ def atualizar_pilha_vir(mem_virtual, canvas2, quadrados2, num_processo):
     for i in range(len(mem_virtual)):
         if i < len(mem_virtual) and i < 50:
             canvas2.itemconfigure(quadrados2[i], text=mem_virtual[i])
-        elif i >= 50:
-            cont += 1
-            canvas2.itemconfigure(quadrados2[i], text=cont)     
-        else:
-            canvas2.itemconfigure(quadrados2[i], text="")
     
 #Adiciona valor na memoria fisica
 def adicionar_valor_fis(window, num, mem_fisica, mem_virtual, pegarValores, canvas, quadrados, num_paginas, canvas2, quadrados2): 
