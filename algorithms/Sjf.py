@@ -18,42 +18,40 @@ class Sjf:
         return Turnaround/ProcessList.size
     
     def Sjf(self, ProcessArray):
-        CopyArray = np.array([]) 
+        ProcessArrayCopy = np.array([]) 
 
-        for process in ProcessArray: # copia pq python é so por referencia
-            CopyArray = np.append(CopyArray, process.clone() )
+        for process in ProcessArray:
+            ProcessArrayCopy = np.append(ProcessArrayCopy, process.clone() )
 
-        WorkingList = np.array(CopyArray) # lista de processos que serão executados, mas talvez ainda não esteja prontos
+        WorkingList = np.array(ProcessArrayCopy) # lista de processos que serão executados
         TotalTime = 0 # conta o tempo decorrido
-        ProcessCount = CopyArray.size
-        ExecutingProcess = None #processo no estado executando
-        ReadyList = np.array([]) #lista de processos que chegaram e esperam sua vez
+        ProcessCount = ProcessArrayCopy.size # quantidade de processos
+        ExecutingProcess = None # processo em execução
+        ReadyList = np.array([]) # lista de processos que chegaram e esperam sua vez
 
-        #execuçao dos processos
+        # execuçao dos processos
         while ProcessCount != 0:
-            for process in WorkingList: # so coloca na lista de prontos se já chegou
+            for process in WorkingList: # só coloca na lista de prontos se já chegou
                 if process.StartTime <= TotalTime:
                     ReadyList = np.append(ReadyList, process)
                     WorkingList = np.delete(WorkingList, np.where(WorkingList == process))
                     for i in range(TotalTime):
                         process.PrintList.append(" ")
 
-            #Escolhe o proximo
+            #Escolhe o proximo processo para executar
             if ExecutingProcess == None: # so escolhe o proximo se nenhum estiver sendo executado
                 for process in ReadyList:
-                    if process.StartTime <= TotalTime : # so escolhe o proximo caso alguem ja tenho chegado
+                    if process.StartTime <= TotalTime : # so escolhe o proximo processo caso alguem ja tenho chegado
                         if ExecutingProcess == None: # escolhe o 1 para comparação
                             ExecutingProcess = process
-                        else: # encontra o com menor job dos que ja chegaram
+                        else: # encontra o processo com menor job dos que ja chegaram
                             if process.ExecutionTime - process.ExecutedTime  < ExecutingProcess.ExecutionTime - ExecutingProcess.ExecutedTime:
                                 ExecutingProcess = process
 
             TotalTime += 1
             #Ao executar um processo atualiza a janela
             if ExecutingProcess != None:
-                print(f'TotalTime: {TotalTime}') #Codigo de debug
-                print(f'ProcessId: {int(ExecutingProcess.ProcessId)}') #Codigo de debug
-                self.progress_table.loc[int(ExecutingProcess.ProcessId),TotalTime-1].configure({"background":'Green'}) #Ao ler o processo marca ele como verde
+                self.progress_table.loc[int(ExecutingProcess.ProcessId),TotalTime-1].configure({"background":'Green'}) # ao ler o processo marca ele como verde
                 for process in ReadyList:
                     if process != ExecutingProcess:
                         self.progress_table.loc[int(process.ProcessId),TotalTime-1].configure({"background":'Grey'})
@@ -64,7 +62,7 @@ class Sjf:
                 ExecutingProcess.PrintList.append("X")
 
                 if ExecutingProcess.Deadline - (TotalTime - ExecutingProcess.StartTime) < 0:
-                        self.progress_table.loc[int(ExecutingProcess.ProcessId),TotalTime-1].configure({"background":'Green'}) #Ao ler o processo marca ele como cinza
+                        self.progress_table.loc[int(ExecutingProcess.ProcessId),TotalTime-1].configure({"background":'Green'}) # ao ler o processo marca ele como cinza
                         self.process_window.update()
                         ExecutingProcess.MetDeadline = False
 
@@ -77,44 +75,16 @@ class Sjf:
 
             #Tempo de espera para calculo de turnaround
             for process in ReadyList:
-                if (process == ExecutingProcess) or (process.StartTime >= TotalTime):#não conta se é o que ta execuntado ou ainda "não chegou"
+                if (process == ExecutingProcess) or (process.StartTime >= TotalTime): # não conta caso esteja executando ou ainda "não chegou"
                     continue
                 process.PrintList.append("O")
                 process.WaitTime += 1
 
-            for process in CopyArray:
+            for process in ProcessArrayCopy:
                 for i in range(process.WaitTime + process.ExecutedTime + process.StartTime ,TotalTime):
                     process.PrintList.append(" ")
             
-            self.PrintProcess(CopyArray, TotalTime)
-            
             if self.var.get() == 0:
                 self.process_window.wait_variable(self.var)
-
-        print(f"Tempo total : {str(TotalTime)}")
-        print("----------------------------------")
-        print(f"Turnaround : {str(self.TurnAround(CopyArray))}")
-        print("----------------------------------")
-        return
-    
-    def PrintProcess(self,ProcessArray, TotalTime):
-        # for windows
-        if name == 'nt':
-            _ = system('cls')
-    
-        # for mac and linux(here, os.name is 'posix')
-        else:
-            _ = system('clear')
-
-        for process in ProcessArray:
-            print(process.ProcessId, end = "")
-            if process.StartTime < TotalTime:
-                for j in range(TotalTime):
-                    print(process.PrintList[j], end = "")
-                if not process.MetDeadline:
-                    print(" Estourou", end="")
-
-        self.process_window.update_idletasks()
-        sleep(1)          
 
         return

@@ -38,7 +38,7 @@ def process_window(numProcess):
 
     processes = []
     for actual_process in range(numProcess):
-        y_position += 150  # Adjust this value as needed
+        y_position += 150
 
         label_process = Label(window, text=f"Id Processo: {actual_process}")
         label_process.place(x=x_position, y=y_position)
@@ -137,13 +137,10 @@ def scheduler_window(numProcess, quantum, overload, processesData, processAlgori
 
     x = x_position
     for k in range(progress_n_columns + 1):
-        lb = Label(window, text=str(k), font=("Arial", 8))
+        lb = Label(window, text=str(k), font=("Arial", 8), width=1, justify='center')
         lb.place(x=x, y=progress_y - 22)
 
-        if k < 10:
-            x += 15
-        else:
-            x += 16
+        x += 18.05
 
         lb.configure(bg="#cf9416")
 
@@ -200,7 +197,7 @@ def scheduler_window(numProcess, quantum, overload, processesData, processAlgori
     proceed.place(x=x_position + 190, y=progress_y - 90)
 
     turn_around_label = Label(window, text="", font=("Arial", 13))
-    turn_around_label.place(x=x_position + 290, y=progress_y - 90)
+    turn_around_label.place(x=x_position + 320, y=progress_y - 90)
     turn_around_label.configure(bg="#cf9416")
 
     voltar = Button(window,text =" Voltar ", command = back)
