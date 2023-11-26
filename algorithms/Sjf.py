@@ -1,5 +1,8 @@
 from time import sleep
 import numpy as np
+from memories.FifoMemory import adicionar_valor_fis, adicionar_valor_vir
+from memories.LRUMemory import adicionar_valor_fis_lru, janelaLRU
+from windows.memory import janelaFifo
 
 class Sjf:
     def __init__(self, process_interface):
@@ -7,6 +10,8 @@ class Sjf:
         self.progress_table = process_interface[1]
         self.var = process_interface[2]
         self.TurnAroundLabel = process_interface[3]
+        self.alg_memoria = process_interface[4]
+        self.num_paginas = process_interface[5]
 
     def TurnAround(self, ProcessList):
         Turnaround = 0
@@ -18,6 +23,11 @@ class Sjf:
         return Turnaround/ProcessList.size
     
     def Sjf(self, ProcessArray):
+        if self.alg_memoria == "FIFO":
+            canvas, quadrados, canvas2, quadrados2, mem_fisica, mem_virtual, pegarValores = janelaFifo(self.process_window)
+        elif self.alg_memoria == "LRU":
+            canvas, quadrados, canvas2, quadrados2, mem_fisica, mem_virtual, pegarValores = janelaLRU(self.process_window)
+
         ProcessArrayCopy = np.array([]) 
 
         for process in ProcessArray:
@@ -53,6 +63,11 @@ class Sjf:
 
             #Ao executar um processo atualiza a janela
             if ExecutingProcess != None:
+                if self.alg_memoria == "FIFO":
+                    adicionar_valor_fis(self.process_window, int(ExecutingProcess.ProcessId), mem_fisica, mem_virtual, pegarValores, canvas, quadrados, self.num_paginas, canvas2, quadrados2)
+                elif self.alg_memoria == "LRU":
+                    adicionar_valor_fis_lru(self.process_window, int(ExecutingProcess.ProcessId), mem_fisica, pegarValores, canvas, quadrados, self.num_paginas)
+                
                 self.progress_table.loc[int(ExecutingProcess.ProcessId), TotalTime].configure({"background":'Green'}) # ao ler o processo marca ele como verde
                 for process in ReadyList:
                     if process != ExecutingProcess:

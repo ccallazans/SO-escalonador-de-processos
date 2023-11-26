@@ -10,6 +10,7 @@ import numpy as np
 processesData = []
 quantum = -1
 overload = -1
+pagina = -1
 
 def process_window(numProcess):
     window = Tk()
@@ -32,6 +33,19 @@ def process_window(numProcess):
 
     if overload >= 0:
         overload_input.insert(0, overload)
+
+    pagina_label = Label(window, text="Qtd Páginas", anchor="center")
+    pagina_label.place(x=70, y=260)
+    pagina_input = Entry(justify="center")
+    pagina_input.place(x=70, y=280)
+
+    if pagina >= 0:
+        pagina_input.insert(0, pagina)
+
+    select_memory = StringVar()
+    select_memory.set("FIFO")
+    select_memoryMenu = OptionMenu(window, select_memory, "FIFO", "LRU")
+    select_memoryMenu.place(x=70, y=310)
 
     y_position = 30
     x_position = 250
@@ -77,7 +91,7 @@ def process_window(numProcess):
     algorithmMenu.place(x=x_position + 50, y=y_position + 250)
 
     def simulate():    
-        global processesData, quantum, overload
+        global processesData, quantum, overload, pagina
 
         processesData.clear()
 
@@ -87,16 +101,17 @@ def process_window(numProcess):
 
         quantum = int(quantum_input.get())
         overload = int(overload_input.get())
+        pagina = int(pagina_input.get())
 
         window.destroy()
-        scheduler_window(numProcess, quantum, overload, processesData, algorithm.get())
+        scheduler_window(numProcess, quantum, overload, processesData, algorithm.get(), select_memory.get(), pagina)
 
     proceed = Button(window, text="Simular", command=simulate)
     proceed.place(x=x_position + 130, y=y_position + 250)
 
     window.mainloop()
 
-def scheduler_window(numProcess, quantum, overload, processesData, processAlgorithm):
+def scheduler_window(numProcess, quantum, overload, processesData, processAlgorithm, select_memory, pagina):
     window = Tk()
     screen_width = window.winfo_screenwidth()
     screen_height = window.winfo_screenheight()
@@ -207,7 +222,14 @@ def scheduler_window(numProcess, quantum, overload, processesData, processAlgori
     print(processesData)
     ProcessArray = [Process(processesData[i][0], processesData[i][1], processesData[i][2], processesData[i][3], processesData[i][4], i) for i in range(numProcess)]
 
-    process_interface_package = [window, progress_table, var, turn_around_label]
+    ##########################
+
+    # if select_memory == "FIFO":
+    #     janelaFifo(pagina, window)
+
+    ##########################
+
+    process_interface_package = [window, progress_table, var, turn_around_label, select_memory, pagina]
 
     fifo = Fifo(process_interface_package)
     sjf  = Sjf(process_interface_package)
