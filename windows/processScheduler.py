@@ -136,7 +136,7 @@ def scheduler_window(numProcess, quantum, overload, processesData, processAlgori
         lb.configure(bg="#cf9416")
 
     x = x_position
-    for k in range(progress_n_columns + 1):
+    for k in range(progress_n_columns):
         lb = Label(window, text=str(k), font=("Arial", 8), width=1, justify='center')
         lb.place(x=x, y=progress_y - 22)
 
