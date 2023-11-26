@@ -32,6 +32,11 @@ class Fifo:
 
         # execução dos processos
         while ProcessCount != 0:
+            sleep(1)
+
+            if self.var.get() == 0:
+                self.process_window.wait_variable(self.var)
+
             for process in WorkingList: # só coloca na lista de prontos se já chegou
                 if process.StartTime <= TotalTime:
                     ReadyList = np.append(ReadyList, process)
@@ -70,11 +75,6 @@ class Fifo:
                     continue
                 process.WaitTime += 1
 
-            sleep(1)
-            
-            if self.var.get() == 0:
-                self.process_window.wait_variable(self.var)
-        
         self.TurnAround(ProcessArrayCopy)
 
         return
